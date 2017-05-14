@@ -40,8 +40,7 @@
 
             window.console.log = oldConsoleLog;
 
-            if (stdout[0].startsWith("WARNING")) return stdout.splice(2).join('\n')
-            return stdout.splice(1).join('\n')
+            return stdout.filter(function (line) { return !line.startsWith("WARNING");}).splice(1).join('\n');
           };
           resolve(z3);
         }, memFileTimeOut);
