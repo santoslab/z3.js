@@ -27,7 +27,7 @@
               oldWindowModule = window.Module;
             }
 
-            console.log("Evaluating asmjs code...");
+            //console.log("Evaluating asmjs code...");
             var newCode = "var memoryInitializerPath = '" + path + "';" + request.responseText;
             solverObj = new Function(newCode)();
 
