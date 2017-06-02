@@ -4,6 +4,7 @@ var Module = {
   arguments : ["-smt2", fileName],
   noInitialRun : true,
   noExitRuntime : true,
+  printErr : function (text) { if (window.DEBUG) console.warn(text); },
   TOTAL_MEMORY : 1024 * 1024 * 1024
 };
 
