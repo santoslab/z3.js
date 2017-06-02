@@ -44,7 +44,7 @@ python scripts/mk_make.py --x86 --githash=$(git rev-parse HEAD) --staticlib
 cd build
 sed -i.old -e 's/AR=ar/AR=emar/g' config.mk
 sed -i.old -e 's/EXE_EXT=/EXE_EXT=.js/g' config.mk
-sed -i.old -e 's/^\(LINK_EXTRA_FLAGS=.*\)/\1 -L\/usr\/lib32 -Oz -s DISABLE_EXCEPTION_CATCHING=0 -s INVOKE_RUN=0 -s NO_EXIT_RUNTIME=1 -s ASSERTIONS=1/g' config.mk
+sed -i.old -e 's/^\(LINK_EXTRA_FLAGS=.*\)/\1 -L\/usr\/lib32 -Oz -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1/g' config.mk
 emmake make
 cd ../..
 cp z3.js.pre z3.js
