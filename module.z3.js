@@ -12,7 +12,7 @@
 }(this, function (loadModule) {
   return function loadZ3(directory) {
     return new Promise(function(resolve, reject) {
-      loadModule("z3.wrapped.js", directory).then(function(z3) {
+      loadModule("z3.js", directory).then(function(z3) {
         var memFileTimeOut = 1000;
         setTimeout(function() {
 
