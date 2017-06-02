@@ -1,25 +1,29 @@
 #!/bin/bash -e
-if [ ! -e emsdk-portable ]; then
-  rm -f emsdk-portable.tar.gz
-  curl -O https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz
-  tar xzf emsdk-portable.tar.gz
-  rm -f emsdk-portable.tar.gz
-  cd emsdk-portable
-  ./emsdk update
-  ./emsdk install latest
-  ./emsdk activate latest
+if [ -e /opt/emsdk-portable ]; then
+  source /opt/emsdk-portable/emsdk_env.sh
 else
-  cd emsdk-portable
-#  printf "Should I update the emsdk? (y/N): "
-#  answer=$(read)
-#  if [ "$answer" == "y" -o "$answer" == "Y" ]; then
+  if [ ! -e emsdk-portable ]; then
+    rm -f emsdk-portable.tar.gz
+    curl -O https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz
+    tar xzf emsdk-portable.tar.gz
+    rm -f emsdk-portable.tar.gz
+    cd emsdk-portable
     ./emsdk update
-	./emsdk install latest
-	./emsdk activate latest
-#  fi
+    ./emsdk install latest
+    ./emsdk activate latest
+  else
+    cd emsdk-portable
+  #  printf "Should I update the emsdk? (y/N): "
+  #  answer=$(read)
+  #  if [ "$answer" == "y" -o "$answer" == "Y" ]; then
+      ./emsdk update
+  	./emsdk install latest
+  	./emsdk activate latest
+  #  fi
+  fi
+  source ./emsdk_env.sh
+  cd ..
 fi
-source ./emsdk_env.sh
-cd ..
 git submodule update --init --recursive
 cd z3
 #if [ -e build ]; then
@@ -38,9 +42,10 @@ export CC=emcc
 export CXX=em++
 python scripts/mk_make.py --x86 --githash=$(git rev-parse HEAD) --staticlib
 cd build
-sed -i '.old' 's/AR=ar/AR=emar/g' config.mk
-sed -i '.old' 's/EXE_EXT=/EXE_EXT=.js/g' config.mk
-sed -i '.old' 's/^\(LINK_EXTRA_FLAGS=.*\)/\1 -Oz -s DISABLE_EXCEPTION_CATCHING=0 -s INVOKE_RUN=0 -s NO_EXIT_RUNTIME=1 -s ALLOW_MEMORY_GROWTH=1/g' config.mk
+sed -i.old -e 's/AR=ar/AR=emar/g' config.mk
+sed -i.old -e 's/EXE_EXT=/EXE_EXT=.js/g' config.mk
+sed -i.old -e 's/^\(LINK_EXTRA_FLAGS=.*\)/\1 -L\/opt\/local\/lib -L\/usr\/lib32 -L\/usr\/lib\/i386-linux-gnu -Oz -s DISABLE_EXCEPTION_CATCHING=0 -s INVOKE_RUN=0 -s NO_EXIT_RUNTIME=1 -s ALLOW_MEMORY_GROWTH=1/g' config.mk
+sed -i.old -e 's/^\(CXXFLAGS=.*\)/\1 -I\/opt\/local\/include -I\/usr\/include\/i386-linux-gnu/g' config.mk
 emmake make
 cd ../..
 cp z3.js.pre z3.js
